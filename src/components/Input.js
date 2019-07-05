@@ -1,8 +1,9 @@
 import React from "react";
 
-function Input({ type, value, onKeyDown, placeholder, onChange }) {
+function Input({ type, className, value, onKeyDown, placeholder, onChange }) {
   return (
     <input
+      className={className}
       type={type}
       value={value}
       onKeyDown={onKeyDown}
