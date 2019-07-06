@@ -5,47 +5,65 @@ class Feedback extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      displayFeedback: [],
       username: "",
-      password: "",
-      display: ""
+      password: ""
+      // display: ""
     };
+    this.handleShowDisplay = this.handleShowDisplay.bind(this);
+    // this.handleShowDisplay();
   }
 
-   componentDidMount() {
+  componentDidMount() {
     let myResult;
+
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
-    try {
-      axios({
-        method: "get",
-        url: `${process.env.REACT_APP_HOST}/feedback`,
-        headers
-      }).then(response => {
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_HOST}/feedback`,
+      headers
+    })
+      .then(response => {
         myResult = response.data;
+        console.log("myResult", myResult);
         this.setState({
           username: "",
           password: "",
-          display: myResult
+          displayFeedback: myResult
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        myResult = err.message;
+        return this.setState({
+          username: "",
+          password: "",
+          displayFeedback: myResult
         });
       });
-    } catch (err) {
-      console.log(err);
-      myResult = err.message;
-      return this.setState({
-        username: "",
-        password: "",
-        display: myResult
-      });
-    }
+  }
+
+  handleShowDisplay() {
+    const allFbElemsInState = [...this.state.displayFeedback];
+    const textItems = allFbElemsInState.map(document => {
+      return document.text;
+    });
+    console.log("allFbElemsInState", allFbElemsInState);
+    console.log("textItems", textItems);
+    this.props.callbackFromParent(allFbElemsInState);
+    return;
   }
 
   render() {
     return (
       <div>
-        <p className="resultText">
-          {this.props.display + JSON.stringify(this.state.display)}
-        </p>
+          {/* {e => this.handleShowDisplay(e)} */}
+        {/* <p className="resultText">{this.handleShowDisplay()}</p> */}
       </div>
+      //   <form>
+      // <p className="resultText">{this.handleShowDisplay()}</p>
+      //   </form>
     );
   }
 }

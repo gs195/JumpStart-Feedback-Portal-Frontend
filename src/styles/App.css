@@ -39,3 +39,34 @@
   overflow: scroll;
   color: #282c34;
 }
+
+.good {
+height: 100px;
+width: 100px;
+background-color: beige;
+overflow: scroll;
+color: black;
+font-size: 12px;
+text-align: left;
+}
+
+.suggest {
+height: 100px;
+width: 100px;
+background-color: azure;
+overflow: scroll;
+color: black;
+font-size: 12px;
+text-align: left;
+}
+
+.improve {
+height: 100px;
+width: 100px;
+background-color: blanchedalmond;
+overflow: scroll;
+color: black;
+font-size: 12px;
+text-align: left;
+}
+

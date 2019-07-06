@@ -11,7 +11,7 @@ function Login({
 }) {
   return (
     <div className="loginDiV">
-      <form>
+      {/* <form> */}
         <Input
           className="username"
           type="text"
@@ -32,7 +32,7 @@ function Login({
           type="submit"
           onClick={loginClick}
         />
-      </form>
+      {/* </form> */}
     </div>
   );
 }
