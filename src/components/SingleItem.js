@@ -15,8 +15,8 @@ function SingleItem({
         onClick={onClick}
       >
         {description}
-        <span onClick={onClickSpan}>X</span>
       </li>
+        <span onClick={onClickSpan}>❌</span>
     </div>
   );
 }

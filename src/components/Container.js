@@ -12,13 +12,13 @@ function Container({
   handleNewInput
 }) {
   return (
-    <div className="inputAndList-container">
+    <div className={`${String(theCategory)}-container`}>
       <Input
         className="FeedbackInput"
         type="text"
         value={handleInputField(theCategory)}
         onKeyDown={event => handleEnterPress(event, theCategory)}
-        placeholder={String(theCategory)}
+        placeholder={`${String(theCategory)}`}
         onChange={event => handleNewInput(event, theCategory)}
       />
       <ul className={String(theCategory)}>

@@ -16,7 +16,6 @@ class Feedback extends React.Component {
 
   componentDidMount() {
     let myResult;
-
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
     axios({
@@ -26,7 +25,7 @@ class Feedback extends React.Component {
     })
       .then(response => {
         myResult = response.data;
-        console.log("myResult", myResult);
+
         this.setState({
           username: "",
           password: "",
@@ -35,11 +34,10 @@ class Feedback extends React.Component {
       })
       .catch(err => {
         console.log(err);
-        myResult = err.message;
         return this.setState({
           username: "",
           password: "",
-          displayFeedback: myResult
+          displayFeedback: []
         });
       });
   }
@@ -58,7 +56,7 @@ class Feedback extends React.Component {
   render() {
     return (
       <div>
-          {/* {e => this.handleShowDisplay(e)} */}
+        {this.props.datas(this.state.displayFeedback)}
         {/* <p className="resultText">{this.handleShowDisplay()}</p> */}
       </div>
       //   <form>

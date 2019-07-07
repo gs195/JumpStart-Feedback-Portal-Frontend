@@ -10,7 +10,7 @@ function Login({
   password
 }) {
   return (
-    <div className="loginDiV">
+    <div className="loginDiv">
       {/* <form> */}
         <Input
           className="username"
@@ -26,6 +26,7 @@ function Login({
           placeholder={`password..`}
           onChange={event => handleNewPassword(event)}
         />
+
         <Button
           word="Login"
           className="submit"
