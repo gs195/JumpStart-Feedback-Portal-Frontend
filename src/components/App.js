@@ -79,7 +79,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        {/* <header className="App-header"> */}
         <div className="sign-in">
           <Logout logoutClick={this.logoutClick} />
           <div className="outcome"><span>{`${this.state.display}`}</span></div>
@@ -90,13 +89,11 @@ class App extends React.Component {
             handleNewPassword={this.handleNewPassword}
             loginClick={this.loginClick}
           />
-          <p className="session">Session</p>
         </div>
         <div>
           <Feedback2 />
         </div>
         <div className="logout-container" />
-        {/* </header> */}
       </div>
     );
   }

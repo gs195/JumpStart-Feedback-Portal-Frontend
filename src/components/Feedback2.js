@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/App.css";
 import axios from "axios";
 import Container from "./Container";
+import Input from "./Input";
 
 const categories = { good: "good", suggest: "suggest", improve: "improve" };
 
@@ -13,12 +14,16 @@ class Feedback2 extends React.Component {
       feedbackItems: [],
       username: "",
       password: "",
-      session: "react",
+      session: "",
       fieldValue: [
         { value: "", category: categories.good },
         { value: "", category: categories.suggest },
         { value: "", category: categories.improve }
-      ]
+      ],
+      isInstructor: false,
+      instructor: "",
+      sessionInputFieldValue: "",
+      clientName: ""
     };
   }
 
@@ -33,19 +38,44 @@ class Feedback2 extends React.Component {
     })
       .then(response => {
         myResult = response.data;
-
+        const isInstructor = type => {
+          if (type === "Instructor") {
+            return true;
+          } else {
+            return false;
+          }
+        };
         this.setState({
           username: "",
           password: "",
-          feedbackItems: myResult
+          feedbackItems: myResult.fbItems,
+          isInstructor: isInstructor(myResult.userRole),
+          clientName: myResult.userName
         });
       })
       .catch(err => {
         console.log(err);
         return this.setState({
-          username: "",
-          password: "",
           feedbackItems: []
+        });
+      });
+    axios({
+      method: "get",
+      url: `${process.env.REACT_APP_HOST}/session`,
+      headers
+    })
+      .then(response => {
+        myResult = response.data;
+        console.log("myResult is", myResult);
+        this.setState({
+          session: myResult.session,
+          instructor: myResult.instructor
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        return this.setState({
+          session: ""
         });
       });
   }
@@ -62,6 +92,10 @@ class Feedback2 extends React.Component {
       return obj;
     });
     this.setState({ fieldValue: newArray });
+  };
+
+  handleNewSessionInput = event => {
+    this.setState({ sessionInputFieldValue: event.target.value });
   };
 
   handleEnterPress = (event, theCategory) => {
@@ -100,6 +134,33 @@ class Feedback2 extends React.Component {
       });
   };
 
+  handleEnterNewSession = event => {
+    let enterKeyCode = 13;
+    if (event.keyCode !== enterKeyCode || event.target.value === "") return;
+    let myData;
+    const gotItem = sessionStorage.getItem("JWT");
+    let headers = { Authorization: "Bearer " + String(gotItem) };
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_HOST}/session`,
+      data: {
+        session: this.state.sessionInputFieldValue
+      },
+      headers
+    })
+      .then(response => {
+        myData = response.data;
+        this.setState({
+          display: myData
+        });
+        window.location.reload();
+      })
+      .catch(err => {
+        console.log(err);
+        return this.setState({ display: err.response.data });
+      });
+  };
+
   handleInputField = theCategory => {
     let newFieldValueArray = this.state.fieldValue.filter(
       obj => obj.category === String(theCategory)
@@ -108,12 +169,12 @@ class Feedback2 extends React.Component {
   };
 
   spanClickHandler = (event, id) => {
-    let confirmation = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-    if (!confirmation) {
-      return;
-    }
+    // let confirmation = window.confirm(
+    //   "Are you sure you want to delete this task?"
+    // );
+    // if (!confirmation) {
+    //   return;
+    // }
     let myData;
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
@@ -124,7 +185,7 @@ class Feedback2 extends React.Component {
     })
       .then(response => {
         myData = response.data;
-        console.log(myData)
+        console.log(myData);
         this.setState({
           display: myData
         });
@@ -169,9 +230,24 @@ class Feedback2 extends React.Component {
 
     return (
       <div className="App">
-        {/* <header className="App-header"> */}
+        <div className="instructor-container">
+          <p className="clientName">
+            {this.state.clientName ? `Welcome ${this.state.clientName}!` : ""}
+          </p>
+          <p className="sessionInstructor">{`Instructor ${
+            this.state.instructor
+          }`}</p>
+        </div>
+        <Input
+          className="sessionInputDiv"
+          type="text"
+          value={this.state.sessionInputFieldValue}
+          onKeyDown={this.handleEnterNewSession}
+          placeholder={`Session ${this.state.session}`}
+          onChange={this.handleNewSessionInput}
+          disabled={this.state.isInstructor ? false : true}
+        />
         <div className="bulk-container">{containerListByCategorty()}</div>
-        {/* </header> */}
       </div>
     );
   }

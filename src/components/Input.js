@@ -1,6 +1,14 @@
 import React from "react";
 
-function Input({ type, className, value, onKeyDown, placeholder, onChange }) {
+function Input({
+  type,
+  className,
+  value,
+  onKeyDown,
+  placeholder,
+  onChange,
+  disabled
+}) {
   return (
     <input
       className={className}
@@ -9,6 +17,7 @@ function Input({ type, className, value, onKeyDown, placeholder, onChange }) {
       onKeyDown={onKeyDown}
       placeholder={placeholder}
       onChange={onChange}
+      disabled={disabled}
     />
   );
 }
