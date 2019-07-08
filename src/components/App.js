@@ -14,6 +14,12 @@ class App extends React.Component {
     };
   }
 
+    componentDidUpdate(prevProps, prevState) {
+      if(this.props.prevProps !== this.datas) {
+        
+      }
+  }
+
   handleNewUsername = event => {
     this.setState({ username: event.target.value });
   };
