@@ -3,6 +3,7 @@ import "../styles/App.css";
 import axios from "axios";
 import Container from "./Container";
 import Input from "./Input";
+import generateID from "../generateID";
 
 const categories = { good: "good", suggest: "suggest", improve: "improve" };
 
@@ -23,11 +24,12 @@ class Feedback2 extends React.Component {
       isInstructor: false,
       instructor: "",
       sessionInputFieldValue: "",
-      clientName: ""
+      clientName: "",
+      clientId: ""
     };
   }
 
-  getFeedback() {
+  getFeedbackAndSession() {
     let myResult;
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
@@ -50,7 +52,8 @@ class Feedback2 extends React.Component {
           password: "",
           feedbackItems: myResult.fbItems,
           isInstructor: isInstructor(myResult.userRole),
-          clientName: myResult.userName
+          clientName: myResult.userName,
+          clientId: myResult.userId
         });
       })
       .catch(err => {
@@ -104,6 +107,16 @@ class Feedback2 extends React.Component {
     let myData;
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
+
+    const ab = this.state.fieldValue.filter(
+      elem => elem.category === theCategory
+    );
+
+    const newFeedbackItemsArray = [
+      ...this.state.feedbackItems,
+      { text: ab[0].value, category: theCategory, _id: generateID() }
+    ];
+
     axios({
       method: "post",
       url: `${process.env.REACT_APP_HOST}/feedback`,
@@ -115,10 +128,8 @@ class Feedback2 extends React.Component {
       headers
     })
       .then(response => {
-        const newFeedbackItemsArray = [
-          ...this.state.feedbackItems,
-          { text: event.target.value, category: theCategory }
-        ];
+        console.log("ab[0]", ab[0]);
+
         myData = response.data;
         const newFieldValueArray = this.state.fieldValue.map(field => {
           if (field.category === theCategory) {
@@ -174,25 +185,27 @@ class Feedback2 extends React.Component {
   };
 
   spanClickHandler = (event, id) => {
-    // let confirmation = window.confirm(
-    //   "Are you sure you want to delete this task?"
-    // );
-    // if (!confirmation) {
-    //   return;
-    // }
     let myData;
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
+    let textToDelete = this.state.feedbackItems.filter(item => {
+      return item._id === id;
+    });
+    const itemsToKeep = this.state.feedbackItems.filter(item => {
+      return item._id !== id;
+    });
     axios({
       method: "delete",
-      url: `${process.env.REACT_APP_HOST}/feedback/${id}`,
+      url: `${process.env.REACT_APP_HOST}/feedback`,
+      data: { text: textToDelete[0].text, category: textToDelete[0].category },
       headers
     })
       .then(response => {
         myData = response.data;
         console.log(myData);
         this.setState({
-          display: myData
+          display: myData,
+          feedbackItems: itemsToKeep
         });
         // this.getFeedback();
       })
