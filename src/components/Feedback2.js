@@ -84,7 +84,7 @@ class Feedback2 extends React.Component {
   }
 
   componentDidMount() {
-    this.getFeedback();
+    this.getFeedbackAndSession();
   }
 
   handleNewInput = (event, theCategory) => {
