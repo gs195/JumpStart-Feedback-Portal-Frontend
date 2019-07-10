@@ -108,13 +108,17 @@ class Feedback2 extends React.Component {
       method: "post",
       url: `${process.env.REACT_APP_HOST}/feedback`,
       data: {
-        text: event.target.value,
+        text: event.target.value, //needs to change to a state variable
         session: this.state.session,
         category: theCategory
       },
       headers
     })
       .then(response => {
+        const newFeedbackItemsArray = [
+          ...this.state.feedbackItems,
+          { text: event.target.value, category: theCategory }
+        ];
         myData = response.data;
         const newFieldValueArray = this.state.fieldValue.map(field => {
           if (field.category === theCategory) {
@@ -124,7 +128,8 @@ class Feedback2 extends React.Component {
         });
         this.setState({
           fieldValue: newFieldValueArray,
-          display: myData
+          display: myData,
+          feedbackItems: newFeedbackItemsArray
         });
         // this.getFeedback();
       })
