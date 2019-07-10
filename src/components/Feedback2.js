@@ -126,7 +126,7 @@ class Feedback2 extends React.Component {
           fieldValue: newFieldValueArray,
           display: myData
         });
-        this.getFeedback();
+        // this.getFeedback();
       })
       .catch(err => {
         console.log(err);
@@ -189,7 +189,7 @@ class Feedback2 extends React.Component {
         this.setState({
           display: myData
         });
-        this.getFeedback();
+        // this.getFeedback();
       })
       .catch(err => {
         console.log(err);
