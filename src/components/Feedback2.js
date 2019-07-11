@@ -4,6 +4,8 @@ import axios from "axios";
 import Container from "./Container";
 import Input from "./Input";
 import generateID from "../generateID";
+import isInstructor from "../isInstructor";
+import Archive from "./Archive";
 
 const categories = { good: "good", suggest: "suggest", improve: "improve" };
 
@@ -13,7 +15,7 @@ class Feedback2 extends React.Component {
     this.state = {
       display: "system online",
       feedbackItems: [],
-      session: "",
+      //   session: "",
       fieldValue: [
         { value: "", category: categories.good },
         { value: "", category: categories.suggest },
@@ -38,13 +40,6 @@ class Feedback2 extends React.Component {
     })
       .then(response => {
         myResult = response.data;
-        const isInstructor = type => {
-          if (type === "Instructor") {
-            return true;
-          } else {
-            return false;
-          }
-        };
         this.setState({
           feedbackItems: myResult.fbItems,
           isInstructor: isInstructor(myResult.userRole),
@@ -52,10 +47,10 @@ class Feedback2 extends React.Component {
           clientId: myResult.userId
         });
       })
-      .catch(error => {
+      .catch(err => {
         return this.setState({
           feedbackItems: [],
-          display: error.response.data || "system online"
+          display: err.response.data || "system online"
         });
       });
     axios({
@@ -65,16 +60,15 @@ class Feedback2 extends React.Component {
     })
       .then(response => {
         myResult = response.data;
-        console.log("myResult is", myResult);
         this.setState({
-          session: myResult.session,
+          sessionInputFieldValue: myResult.session,
           instructor: myResult.instructor
         });
       })
       .catch(err => {
-        console.log(err);
         return this.setState({
-          session: ""
+          display: err.response.data,
+          sessionInputFieldValue: ""
         });
       });
   }
@@ -100,7 +94,6 @@ class Feedback2 extends React.Component {
   handleEnterPress = (event, theCategory) => {
     let enterKeyCode = 13;
     if (event.keyCode !== enterKeyCode || event.target.value === "") return;
-    let myData;
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
 
@@ -121,14 +114,12 @@ class Feedback2 extends React.Component {
       url: `${process.env.REACT_APP_HOST}/feedback`,
       data: {
         text: event.target.value, //needs to change to a state variable
-        session: this.state.session,
+        session: this.state.sessionInputFieldValue,
         category: theCategory
       },
       headers
     })
       .then(response => {
-        console.log("ab[0]", inputFieldValue[0]);
-        myData = response.data;
         const newFieldValueArray = this.state.fieldValue.map(field => {
           if (field.category === theCategory) {
             field.value = "";
@@ -137,13 +128,11 @@ class Feedback2 extends React.Component {
         });
         this.setState({
           fieldValue: newFieldValueArray,
-          display: myData,
+          display: response.data,
           feedbackItems: newFeedbackItemsArray
         });
-        // this.getFeedback();
       })
       .catch(err => {
-        console.log(err);
         return this.setState({ display: err.response.data });
       });
   };
@@ -151,7 +140,6 @@ class Feedback2 extends React.Component {
   handleEnterNewSession = event => {
     let enterKeyCode = 13;
     if (event.keyCode !== enterKeyCode || event.target.value === "") return;
-    let myData;
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
     axios({
@@ -163,8 +151,7 @@ class Feedback2 extends React.Component {
       headers
     })
       .then(response => {
-        // myData = response.data;
-        window.location.reload();
+        this.setState({ display: response.data });
       })
       .catch(err => {
         console.log(err);
@@ -211,6 +198,26 @@ class Feedback2 extends React.Component {
       });
   };
 
+  archiveClick = () => {
+    this.setState({ display: "Seeking permission to archive..." });
+    const gotItem = sessionStorage.getItem("JWT");
+    let headers = { Authorization: "Bearer " + String(gotItem) };
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_HOST}/feedback/archive`,
+      headers
+    })
+      .then(response => {
+        this.setState({
+          display: response.data,
+          feedbackItems: []
+        });
+      })
+      .catch(err => {
+        return this.setState({ display: err.response.data });
+      });
+  };
+
   render() {
     //filters this.state.feedbackItems to return an array of feedback documents with category = input parameter category
     const fbDocumentListByCategory = inputCategory =>
@@ -242,6 +249,7 @@ class Feedback2 extends React.Component {
     return (
       <div className="App">
         <div className="sign-in">
+          <Archive archiveClick={this.archiveClick} />
           <div className="outcome">{this.state.display}</div>
         </div>
         <div className="instructor-container">
@@ -257,7 +265,7 @@ class Feedback2 extends React.Component {
           type="text"
           value={this.state.sessionInputFieldValue}
           onKeyDown={this.handleEnterNewSession}
-          placeholder={`Session ${this.state.session}`}
+          placeholder={`Session ${this.state.sessionInputFieldValue}`}
           onChange={this.handleNewSessionInput}
           disabled={this.state.isInstructor ? false : true}
         />

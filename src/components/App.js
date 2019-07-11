@@ -5,13 +5,15 @@ import axios from "axios";
 import Login from "./login";
 import Feedback2 from "./Feedback2";
 
+const helloText = "Hello!";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      display: "Hello!",
+      display: helloText,
       username: "",
-      password: "",
+      password: ""
     };
   }
 
@@ -36,7 +38,7 @@ class App extends React.Component {
     if (this.state.username === "" || this.state.password === "") {
       return;
     }
-    this.setState({display: "Logging in..."})
+    this.setState({ display: "Logging in..." });
     const gotItem = sessionStorage.getItem("JWT");
     if (!gotItem) {
       console.log("entered if !gotItem");
@@ -80,7 +82,9 @@ class App extends React.Component {
       <div className="App">
         <div className="sign-in">
           <Logout logoutClick={this.logoutClick} />
-          <div className="outcome"><span>{`${this.state.display}`}</span></div>
+          <div className="outcome">
+            <span>{`${this.state.display}`}</span>
+          </div>
           <Login
             username={this.state.username}
             password={this.state.password}
@@ -90,8 +94,7 @@ class App extends React.Component {
           />
         </div>
         <div>
-          <Feedback2
-          display={this.state.display} />
+          <Feedback2 display={this.state.display} />
         </div>
         <div className="logout-container" />
       </div>
