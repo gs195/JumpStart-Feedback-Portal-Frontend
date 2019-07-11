@@ -11,10 +11,8 @@ class Feedback2 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      display: "",
+      display: "system online",
       feedbackItems: [],
-      username: "",
-      password: "",
       session: "",
       fieldValue: [
         { value: "", category: categories.good },
@@ -48,18 +46,16 @@ class Feedback2 extends React.Component {
           }
         };
         this.setState({
-          username: "",
-          password: "",
           feedbackItems: myResult.fbItems,
           isInstructor: isInstructor(myResult.userRole),
           clientName: myResult.userName,
           clientId: myResult.userId
         });
       })
-      .catch(err => {
-        console.log(err);
+      .catch(error => {
         return this.setState({
-          feedbackItems: []
+          feedbackItems: [],
+          display: error.response.data || "system online"
         });
       });
     axios({
@@ -108,13 +104,16 @@ class Feedback2 extends React.Component {
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
 
-    const ab = this.state.fieldValue.filter(
+    const inputFieldValue = this.state.fieldValue.filter(
       elem => elem.category === theCategory
     );
-
     const newFeedbackItemsArray = [
       ...this.state.feedbackItems,
-      { text: ab[0].value, category: theCategory, _id: generateID() }
+      {
+        text: inputFieldValue[0].value,
+        category: theCategory,
+        _id: generateID()
+      }
     ];
 
     axios({
@@ -128,8 +127,7 @@ class Feedback2 extends React.Component {
       headers
     })
       .then(response => {
-        console.log("ab[0]", ab[0]);
-
+        console.log("ab[0]", inputFieldValue[0]);
         myData = response.data;
         const newFieldValueArray = this.state.fieldValue.map(field => {
           if (field.category === theCategory) {
@@ -165,10 +163,7 @@ class Feedback2 extends React.Component {
       headers
     })
       .then(response => {
-        myData = response.data;
-        this.setState({
-          display: myData
-        });
+        // myData = response.data;
         window.location.reload();
       })
       .catch(err => {
@@ -179,7 +174,7 @@ class Feedback2 extends React.Component {
 
   handleInputField = theCategory => {
     let newFieldValueArray = this.state.fieldValue.filter(
-      obj => obj.category === String(theCategory)
+      obj => obj.category === theCategory
     );
     return newFieldValueArray[0].value;
   };
@@ -210,10 +205,8 @@ class Feedback2 extends React.Component {
         // this.getFeedback();
       })
       .catch(err => {
-        console.log(err);
-        console.log(err.response.message);
         this.setState({
-          display: err.response.message
+          display: err.response.data || "system online"
         });
       });
   };
@@ -248,6 +241,9 @@ class Feedback2 extends React.Component {
 
     return (
       <div className="App">
+        <div className="sign-in">
+          <div className="outcome">{this.state.display}</div>
+        </div>
         <div className="instructor-container">
           <p className="clientName">
             {this.state.clientName ? `Welcome ${this.state.clientName}!` : ""}

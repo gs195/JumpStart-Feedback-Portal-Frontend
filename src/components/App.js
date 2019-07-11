@@ -3,22 +3,17 @@ import Logout from "./Logout";
 import "../styles/App.css";
 import axios from "axios";
 import Login from "./login";
-// import Feedback from "./feedback";
 import Feedback2 from "./Feedback2";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      display: ""
+      display: "Hello!",
+      username: "",
+      password: "",
     };
   }
-
-  //   componentDidUpdate(prevProps, prevState) {
-  //     if(this.props.prevProps !== this.datas) {
-        
-  //     }
-  // }
 
   handleNewUsername = event => {
     this.setState({ username: event.target.value });
@@ -33,7 +28,7 @@ class App extends React.Component {
     this.setState({ display: "Logging out..." });
     setTimeout(() => {
       window.location.reload();
-    }, 1000);
+    }, 500);
   };
 
   loginClick = () => {
@@ -41,8 +36,8 @@ class App extends React.Component {
     if (this.state.username === "" || this.state.password === "") {
       return;
     }
+    this.setState({display: "Logging in..."})
     const gotItem = sessionStorage.getItem("JWT");
-    console.log("gotItem is", gotItem);
     if (!gotItem) {
       console.log("entered if !gotItem");
       axios
@@ -52,19 +47,17 @@ class App extends React.Component {
         })
         .then(response => {
           myData = response.data;
-          console.log("response.data", myData);
           sessionStorage.setItem("JWT", myData.token);
           this.setState({
             display: "Login successful. Loading page data..."
           });
           setTimeout(() => {
             window.location.reload();
-          }, 1000);
+          }, 600);
         })
         .catch(err => {
-          console.log(err);
           this.setState({
-            display: "Incorrect login details "
+            display: err.response.data
           });
         })
         .finally(() => {
@@ -97,7 +90,8 @@ class App extends React.Component {
           />
         </div>
         <div>
-          <Feedback2 />
+          <Feedback2
+          display={this.state.display} />
         </div>
         <div className="logout-container" />
       </div>
