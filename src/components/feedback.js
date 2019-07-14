@@ -56,7 +56,7 @@ class Feedback extends React.Component {
   render() {
     return (
       <div>
-        {this.props.datas(this.state.displayFeedback)}
+        {props.datas(this.state.display)}
         {/* <p className="resultText">{this.handleShowDisplay()}</p> */}
       </div>
       //   <form>

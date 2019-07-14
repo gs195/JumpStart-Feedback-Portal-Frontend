@@ -49,6 +49,7 @@ class App extends React.Component {
         })
         .then(response => {
           myData = response.data;
+          console.log("entered error block");
           sessionStorage.setItem("JWT", myData.token);
           this.setState({
             display: "Login successful. Loading page data..."
@@ -58,11 +59,13 @@ class App extends React.Component {
           }, 600);
         })
         .catch(err => {
+          console.log("entered error block");
           this.setState({
             display: err.response.data
           });
         })
         .finally(() => {
+          console.log("entered error block");
           this.setState({
             username: "",
             password: ""

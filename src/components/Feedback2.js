@@ -94,6 +94,7 @@ class Feedback2 extends React.Component {
   handleEnterPress = (event, theCategory) => {
     let enterKeyCode = 13;
     if (event.keyCode !== enterKeyCode || event.target.value === "") return;
+    this.setState({display: "Submitting your feedback..."})
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
 
@@ -168,6 +169,7 @@ class Feedback2 extends React.Component {
 
   spanClickHandler = (event, id) => {
     let myData;
+    this.setState({display: "Deleting feedback..."})
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
     let textToDelete = this.state.feedbackItems.filter(item => {
