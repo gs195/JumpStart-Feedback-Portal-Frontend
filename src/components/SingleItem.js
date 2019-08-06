@@ -16,7 +16,7 @@ function SingleItem({
       >
         {description}
       </li>
-        <span onClick={onClickSpan}>❌</span>
+        <span onClick={onClickSpan} role="img" aria-label="cross">❌</span>
     </div>
   );
 }

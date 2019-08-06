@@ -43,6 +43,7 @@ input {
 
 input.password {
   -webkit-text-security: disc;
+  margin: 0px 10px;
 }
 
 input:hover {
@@ -180,7 +181,7 @@ span:hover {
   grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 0px;
   color: black;
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 .good-container {
@@ -221,7 +222,7 @@ input.FeedbackInput {
   border-bottom-left-radius: 0px;
 }
 
-button {
+.sign-in button {
   position: relative;
   display: inline;
   padding: 7px 15px 7px 15px;
@@ -234,7 +235,7 @@ button {
   border-radius: 5px;
 }
 
-button:hover {
+.sign-in button:hover {
   background: #109177;
 }
 
@@ -248,7 +249,63 @@ button.logoutDiv {
   grid-template-rows: 0.2fr 1fr 0.4fr;
   grid-gap: 20px;
   grid-row-gap: 0px;
-  background: rgb(220, 252, 240);
+  background: rgb(217, 255, 252);
+}
+
+.sign-up-div {
+  grid-area: 3/3/4/4;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr;
+}
+
+.sign-up-div button {
+  background: rgb(74, 221, 206);
+  box-shadow: none;
+  grid-area: 1/4/2/5;
+  margin-top: 10px;
+  width: 90px;
+  height: 45px;
+  font-size: 1.2rem;
+  margin-left: 25px;
+  padding: 3px;
+  border: 1px solid rgb(127, 228, 218);
+}
+
+.sign-up-div button:hover {
+  background: rgb(84, 207, 195);
+}
+
+.sign-up-input {
+  margin: 10px;
+  width: 300px;
+}
+
+.closeModal {
+  cursor: pointer;
+  margin-left: 325px;
+}
+
+.sign-up-button {
+  margin-top: 40px;
+  background: #16a085;
+  color: white;
+  min-width: 150px;
+  border-radius: 20px;
+}
+
+.sign-up-button:hover {
+  background: #17c2a0;
+}
+
+.sign-up-select-label {
+  color: grey;
+}
+
+.sign-up-select {
+  margin-top: 15px;
 }
 
 .logoutDiv {
@@ -263,7 +320,7 @@ button.logoutDiv {
   justify-self: center;
 }
 
-@import url("https://fonts.googleapis.com/css?family=Gochi+Hand|Patrick+Hand+SC&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Dosis&display=swap");
 .outcome {
   width: 100%;
   height: 100%;
@@ -278,7 +335,7 @@ button.logoutDiv {
   justify-items: center;
   /* background: whitesmoke; */
   /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
-  font-family: "Gochi Hand", cursive;
+  font-family: "Dosis", sans-serif;
   color: #567083;
   font-size: 24px;
   line-height: 10px;
@@ -289,7 +346,12 @@ button.logoutDiv {
 }
 
 button.archive {
-  background: rgb(255, 195, 156);
+  background: rgb(255, 198, 188);
+  border: 1px solid rgb(255, 161, 98);
+}
+
+button.archive:hover {
+  background: #ff976e;
 }
 
 .outcome span {
@@ -303,7 +365,7 @@ button.archive {
 .instructor-container {
   width: 100%;
   height: 45px;
-  background: rgb(184, 247, 223);
+  background: rgb(146, 255, 255);
   justify-self: center;
   align-self: center;
   /* padding-top: 15px; */
@@ -326,13 +388,14 @@ button.archive {
 }
 
 .sessionInputDiv {
+  color: rgb(80, 80, 80);
   border-top-right-radius: 0px;
   border-top-left-radius: 0px;
   border-bottom-right-radius: 20px;
   border-bottom-left-radius: 20px;
   width: 250px;
   height: 40px;
-  background: rgb(117, 247, 197);
+  background: whitesmoke;
   /* grid-area: 3/1/4/4; */
   justify-self: center;
   align-self: center;

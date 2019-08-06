@@ -13,7 +13,7 @@ class Feedback2 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      display: "system online",
+      display: "",
       feedbackItems: [],
       //   session: "",
       fieldValue: [
@@ -32,6 +32,11 @@ class Feedback2 extends React.Component {
   getFeedbackAndSession() {
     let myResult;
     const gotItem = sessionStorage.getItem("JWT");
+    if (!gotItem) {
+      return this.setState({
+        display: "Please log in"
+      });
+    }
     let headers = { Authorization: "Bearer " + String(gotItem) };
     axios({
       method: "get",
@@ -44,13 +49,14 @@ class Feedback2 extends React.Component {
           feedbackItems: myResult.fbItems,
           isInstructor: isInstructor(myResult.userRole),
           clientName: myResult.userName,
-          clientId: myResult.userId
+          clientId: myResult.userId,
+          display: "system online"
         });
       })
       .catch(err => {
         return this.setState({
           feedbackItems: [],
-          display: err.response.data || "system online"
+          display: err.message || "system online"
         });
       });
     axios({
@@ -67,7 +73,7 @@ class Feedback2 extends React.Component {
       })
       .catch(err => {
         return this.setState({
-          display: err.response.data,
+          display: err.message,
           sessionInputFieldValue: ""
         });
       });
@@ -94,7 +100,7 @@ class Feedback2 extends React.Component {
   handleEnterPress = (event, theCategory) => {
     let enterKeyCode = 13;
     if (event.keyCode !== enterKeyCode || event.target.value === "") return;
-    this.setState({display: "Submitting your feedback..."})
+    this.setState({ display: "Submitting your feedback..." });
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
 
@@ -169,7 +175,7 @@ class Feedback2 extends React.Component {
 
   spanClickHandler = (event, id) => {
     let myData;
-    this.setState({display: "Deleting feedback..."})
+    this.setState({ display: "Deleting feedback..." });
     const gotItem = sessionStorage.getItem("JWT");
     let headers = { Authorization: "Bearer " + String(gotItem) };
     let textToDelete = this.state.feedbackItems.filter(item => {
@@ -221,32 +227,10 @@ class Feedback2 extends React.Component {
   };
 
   render() {
-    //filters this.state.feedbackItems to return an array of feedback documents with category = input parameter category
     const fbDocumentListByCategory = inputCategory =>
       this.state.feedbackItems.filter(
         document => document.category === inputCategory
       );
-
-    //obtains an array of category keys, and for each key in this array, creates a <Container> component.
-    const containerListByCategorty = () => {
-      const categoryKeys = Object.keys(categories);
-      return categoryKeys.map((cat, idx) => {
-        return (
-          <Container
-            key={idx}
-            fbDocumentArrayByCategory={fbDocumentListByCategory(
-              categories[cat]
-            )}
-            handleStrikethrough={this.handleStrikethrough}
-            spanClickHandler={this.spanClickHandler}
-            handleInputField={this.handleInputField}
-            theCategory={categories[cat]}
-            handleEnterPress={this.handleEnterPress}
-            handleNewInput={this.handleNewInput}
-          />
-        );
-      });
-    };
 
     return (
       <div className="App">
@@ -271,7 +255,24 @@ class Feedback2 extends React.Component {
           onChange={this.handleNewSessionInput}
           disabled={this.state.isInstructor ? false : true}
         />
-        <div className="bulk-container">{containerListByCategorty()}</div>
+        <div className="bulk-container">
+          {Object.keys(categories).map((cat, idx) => {
+            return (
+              <Container
+                key={idx}
+                fbDocumentArrayByCategory={fbDocumentListByCategory(
+                  categories[cat]
+                )}
+                handleStrikethrough={this.handleStrikethrough}
+                spanClickHandler={this.spanClickHandler}
+                handleInputField={this.handleInputField}
+                theCategory={categories[cat]}
+                handleEnterPress={this.handleEnterPress}
+                handleNewInput={this.handleNewInput}
+              />
+            );
+          })}
+        </div>
       </div>
     );
   }

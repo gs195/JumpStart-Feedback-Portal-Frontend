@@ -4,18 +4,45 @@ import "../styles/App.css";
 import axios from "axios";
 import Login from "./login";
 import Feedback2 from "./Feedback2";
+import Button from "./Button";
+import "./App/App.css";
+import SignUpModal from "./sign-up-modal";
+import Modal from "react-modal";
 
-const helloText = "Hello!";
+Modal.setAppElement("#react-modal");
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      display: helloText,
+      display: "Feedback Portal",
       username: "",
-      password: ""
+      password: "",
+      modalIsOpen: false,
+      newUsername: "",
+      newPassword: "",
+      newRole: "",
+      newName: "",
+      loggedIn: false,
+      modalMessage: ""
     };
   }
+
+  openModal = () => {
+    this.setState({ modalIsOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
+  };
+
+  // onFormSubmit = event => {
+  //   event.preventDefault();
+  // };
+
+  handleChange = event => {
+    this.setState({ [event.target.id]: event.target.value });
+  };
 
   handleNewUsername = event => {
     this.setState({ username: event.target.value });
@@ -49,23 +76,24 @@ class App extends React.Component {
         })
         .then(response => {
           myData = response.data;
-          console.log("entered error block");
+          console.log("entered /jwt/login then block");
           sessionStorage.setItem("JWT", myData.token);
           this.setState({
-            display: "Login successful. Loading page data..."
+            display: "Login successful. Loading page data...",
+            loggedIn: true
           });
           setTimeout(() => {
             window.location.reload();
           }, 600);
         })
         .catch(err => {
-          console.log("entered error block");
+          console.log("entered catch");
+          console.log({ err });
           this.setState({
             display: err.response.data
           });
         })
         .finally(() => {
-          console.log("entered error block");
           this.setState({
             username: "",
             password: ""
@@ -78,6 +106,40 @@ class App extends React.Component {
         display: "Already logged in"
       });
     }
+  };
+
+  signupClick = (event) => {
+    event.preventDefault();
+    axios
+      .post(`${process.env.REACT_APP_HOST}/jwt/signup`, {
+        username: this.state.newUsername,
+        password: this.state.newPassword,
+        role: this.state.newRole,
+        name: this.state.newName
+      })
+      .then(response => {
+        const res = response.data;
+        console.log("entered /jwt/signup then block");
+        sessionStorage.setItem("JWT", res.token);
+        this.setState({
+          display: `Signup successful. Logging in as ${res.username}`,
+          loggedIn: true,
+          newUsername: "",
+          newPassword: "",
+          newRole: "",
+          newName: ""
+        });
+        setTimeout(() => {
+          this.closeModal();
+          window.location.reload()
+        }, 1000);
+      })
+      .catch(err => {
+        console.log("entered /signup catch");
+        this.setState({
+          modalMessage: err.response.data || "Unexpected error"
+        });
+      });
   };
 
   render() {
@@ -95,6 +157,25 @@ class App extends React.Component {
             handleNewPassword={this.handleNewPassword}
             loginClick={this.loginClick}
           />
+          <div className="sign-up-div">
+            <Button
+              className="sign-up"
+              onClick={this.openModal}
+              word="Sign Up"
+            />
+            <SignUpModal
+              modalIsOpen={this.state.modalIsOpen}
+              closeModal={this.closeModal}
+              modalMessage={this.state.modalMessage}
+              newUsername={this.state.newUsername}
+              newPassword={this.state.newPassword}
+              newRole={this.state.newRole}
+              newName={this.state.newName}
+              handleChange={this.handleChange}
+              signupClick={this.signupClick}
+              // onFormSubmit={this.onFormSubmit}
+            />
+          </div>
         </div>
         <div>
           <Feedback2 display={this.state.display} />
