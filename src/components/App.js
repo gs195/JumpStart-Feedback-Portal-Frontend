@@ -36,10 +36,6 @@ class App extends React.Component {
     this.setState({ modalIsOpen: false });
   };
 
-  // onFormSubmit = event => {
-  //   event.preventDefault();
-  // };
-
   handleChange = event => {
     this.setState({ [event.target.id]: event.target.value });
   };
@@ -68,7 +64,6 @@ class App extends React.Component {
     this.setState({ display: "Logging in..." });
     const gotItem = sessionStorage.getItem("JWT");
     if (!gotItem) {
-      console.log("entered if !gotItem");
       axios
         .post(`${process.env.REACT_APP_HOST}/jwt/login`, {
           username: this.state.username,
@@ -76,7 +71,6 @@ class App extends React.Component {
         })
         .then(response => {
           myData = response.data;
-          console.log("entered /jwt/login then block");
           sessionStorage.setItem("JWT", myData.token);
           this.setState({
             display: "Login successful. Loading page data...",
@@ -87,8 +81,6 @@ class App extends React.Component {
           }, 600);
         })
         .catch(err => {
-          console.log("entered catch");
-          console.log({ err });
           this.setState({
             display: err.response.data
           });
@@ -119,7 +111,6 @@ class App extends React.Component {
       })
       .then(response => {
         const res = response.data;
-        console.log("entered /jwt/signup then block");
         sessionStorage.setItem("JWT", res.token);
         this.setState({
           display: `Signup successful. Logging in as ${res.username}`,
@@ -135,7 +126,6 @@ class App extends React.Component {
         }, 1000);
       })
       .catch(err => {
-        console.log("entered /signup catch");
         this.setState({
           modalMessage: err.response.data || "Unexpected error"
         });
@@ -173,7 +163,6 @@ class App extends React.Component {
               newName={this.state.newName}
               handleChange={this.handleChange}
               signupClick={this.signupClick}
-              // onFormSubmit={this.onFormSubmit}
             />
           </div>
         </div>

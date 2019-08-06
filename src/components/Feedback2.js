@@ -15,7 +15,6 @@ class Feedback2 extends React.Component {
     this.state = {
       display: "",
       feedbackItems: [],
-      //   session: "",
       fieldValue: [
         { value: "", category: categories.good },
         { value: "", category: categories.suggest },
@@ -102,6 +101,12 @@ class Feedback2 extends React.Component {
     if (event.keyCode !== enterKeyCode || event.target.value === "") return;
     this.setState({ display: "Submitting your feedback..." });
     const gotItem = sessionStorage.getItem("JWT");
+    if (!gotItem) {
+      this.setState({
+        display: "You must be logged in to give feedback",
+      });
+      return
+    }
     let headers = { Authorization: "Bearer " + String(gotItem) };
 
     const inputFieldValue = this.state.fieldValue.filter(
@@ -161,7 +166,6 @@ class Feedback2 extends React.Component {
         this.setState({ display: response.data });
       })
       .catch(err => {
-        console.log(err);
         return this.setState({ display: err.response.data });
       });
   };
@@ -192,12 +196,10 @@ class Feedback2 extends React.Component {
     })
       .then(response => {
         myData = response.data;
-        console.log(myData);
         this.setState({
           display: myData,
           feedbackItems: itemsToKeep
         });
-        // this.getFeedback();
       })
       .catch(err => {
         this.setState({
